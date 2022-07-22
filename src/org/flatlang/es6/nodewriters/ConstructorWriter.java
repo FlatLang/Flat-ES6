@@ -15,21 +15,22 @@ public abstract class ConstructorWriter extends BodyMethodDeclarationWriter
 		
 		ClassDeclaration extended = node().getDeclaringClass().getExtendedClassDeclaration();
 
-		builder.append("var __value = new ");
+		builder.append("let __value = new ");
 		getWriter(node().getDeclaringClass()).writeName(builder).append("();\n");
 
 		if (extended != null)
 		{
-//			getWriter(extended.getAssignmentMethodNode())
-//				.writeAssignedVariable(builder)
-//				.append(".apply(__value, [].slice.call(arguments));\n");
+			AssignmentMethod assignmentMethod = extended.getAssignmentMethodNode();
+			getWriter(assignmentMethod.getDeclaringClass()).writeName(builder).append('.');
+			getWriter(assignmentMethod).writeName(builder).append(".apply(__value, [].slice.call(arguments));\n");
 		}
 
 //		builder.append("this.__proto__ = ").append(getWriter(node().getDeclaringClass()).writeName()).append(".prototype;\n\n");
-		
+
 		AssignmentMethod assignmentMethod = node().getParentClass().getAssignmentMethodNode();
-		
-//		getWriter(assignmentMethod).writeAssignedVariable(builder).append(".apply(__value, [].slice.call(arguments));\n");
+
+		getWriter(assignmentMethod.getDeclaringClass()).writeName(builder).append('.');
+		getWriter(assignmentMethod).writeName(builder).append(".apply(__value, [].slice.call(arguments));\n");
 		
 		getWriter(node().getScope()).write(builder, false, true);
 
@@ -42,7 +43,11 @@ public abstract class ConstructorWriter extends BodyMethodDeclarationWriter
 	public StringBuilder write(StringBuilder builder)
 	{
 //		writeAssignedVariable(builder).append(" = function ");
-		builder.append("constructor");
+//		builder.append("construct");
+//		writeOverload(builder);
+
+		builder.append("static ");
+		writeName(builder);
 
 		getWriter(node().getParameterList()).write(builder).append(" ");
 
@@ -83,6 +88,8 @@ public abstract class ConstructorWriter extends BodyMethodDeclarationWriter
 	@Override
 	public StringBuilder writeName(StringBuilder builder)
 	{
-		return builder.append("flatConstructors.").append(writeConstructorListName());
+		builder.append("construct");
+		return writeOverload(builder);
+//		return builder.append("flatConstructors.").append(writeConstructorListName());
 	}
 }

@@ -19,13 +19,13 @@ public abstract class ReturnWriter extends IValueWriter
 		if (value != null) {
 			builder.append(' ');
 
-			if (!(value instanceof Throw) && !value.getReturnedNode().isPrimitive()) {
+			if (!Literal.isNullLiteral(value) && !(value instanceof Throw) && !value.getReturnedNode().isPrimitive()) {
 				builder.append('(');
 			}
 
 			getWriter(value).writeExpression(builder);
 
-			if (!(value instanceof Throw) && !value.getReturnedNode().isPrimitive()) {
+			if (!Literal.isNullLiteral(value) && !(value instanceof Throw) && !value.getReturnedNode().isPrimitive()) {
 				builder.append(") || null");
 			}
 		} else if (node().getReturnValues().getNumVisibleChildren() > 0) {

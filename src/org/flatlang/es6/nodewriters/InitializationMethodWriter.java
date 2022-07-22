@@ -18,7 +18,15 @@ public abstract class InitializationMethodWriter extends BodyMethodDeclarationWr
 //	{
 //		return builder;
 //	}
-	
+
+
+	@Override
+	public StringBuilder writeSignature(StringBuilder builder) {
+		builder.append("static ");
+
+		return super.writeSignature(builder);
+	}
+
 	@Override
 	public StringBuilder writeSuperName(StringBuilder builder)
 	{
@@ -28,6 +36,6 @@ public abstract class InitializationMethodWriter extends BodyMethodDeclarationWr
 	@Override
 	public StringBuilder writeName(StringBuilder builder)
 	{
-		return builder.append("init").append(writeOverload());
+		return builder.append("__init").append(writeOverload());
 	}
 }

@@ -48,17 +48,17 @@ public abstract class ProgramWriter extends TypeListWriter
 		}
 		
 		ClassDeclaration[] classes = getClassesHierarchicalInOrder();
-		
-		builder.append("var flatConstructors = {\n");
-		
-		for (ClassDeclaration child : classes)
-		{
-			child.getConstructorList().forEachVisibleListChild(constructor -> {
-				getWriter((Constructor)constructor).writeConstructorListName(builder).append(": function() {},\n");
-			});
-		}
-		
-		builder.append("};\n\n");
+
+		builder.append("\n" +
+			"\n" +
+			"function __copyPrototype(value, prot) {\n" +
+			"\tconst funcs = Object.getOwnPropertyNames(prot);\n" +
+			"\tfor (let i = 0; i < funcs.length; i++) {\n" +
+			"\t\tif (!value.prototype.hasOwnProperty(funcs[i])) {\n" +
+			"\t\t\tvalue.prototype[funcs[i]] = prot[funcs[i]];\n" +
+			"\t\t}\n" +
+			"\t}\n" +
+			"}\n\n");
 
 		builder.append("var flat_null = undefined;\n\n");
 
@@ -69,7 +69,21 @@ public abstract class ProgramWriter extends TypeListWriter
 			printClass(builder, printedClasses, child);
 		}
 
+		for (ClassDeclaration child : classes)
+		{
+			Arrays.stream(child.getImplementedInterfaces()).forEach(i -> {
+				builder.append("__copyPrototype(")
+					.append(getWriter(child).writeName()).append(", ")
+					.append(getWriter(i).writeName()).append(".prototype);\n");
+			});
+		}
+
 		builder.append('\n');
+
+		for (ClassDeclaration child : classes)
+		{
+			getWriter(child).writeEncapsulationAssignments(builder);
+		}
 
 		for (ClassDeclaration child : classes)
 		{

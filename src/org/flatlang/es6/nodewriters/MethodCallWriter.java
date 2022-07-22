@@ -23,6 +23,10 @@ public abstract class MethodCallWriter extends VariableWriter
 
 		writeUsePrefix(builder);
 
+		if (callable instanceof Constructor) {
+			getWriter(callable.getParentClass()).writeName(builder).append(".");
+		}
+
 		if (callable instanceof ExtensionMethodDeclaration) {
 			ExtensionMethodDeclaration method = (ExtensionMethodDeclaration)callable;
 			builder.append("__callExtension");
@@ -34,7 +38,7 @@ public abstract class MethodCallWriter extends VariableWriter
 				builder.append("Async");
 			}
 
-//			builder.append("(").append(getWriter(method).writeAssignedVariable()).append(", [");
+			builder.append("(").append(getWriter(method.getDeclaringClass()).writeName()).append('.').append(getWriter(method).writeName()).append(", [");
 			getWriter(node().getArgumentList()).write(builder, false).append("])");
 		} else if (node().isChainNavigation()) {
 			builder.append("__chain");
