@@ -2,7 +2,6 @@ package org.flatlang.es6.nodewriters;
 
 import org.flatlang.tree.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
@@ -15,10 +14,18 @@ public abstract class ClassDeclarationWriter extends InstanceDeclarationWriter
 	@Override
 	public StringBuilder write(StringBuilder builder)
 	{
-		builder.append("class ").append(writeName()).append(" {\n");
-		
+		builder.append("class ").append(writeName()).append(" ");
+
+		if (node().doesExtendClass()) {
+			builder.append("extends ").append(getWriter(node().getExtendedClassDeclaration()).writeName()).append(" ");
+		}
+
+		builder.append("{\n");
+
 		getWriter(node().getFieldList().getPrivateFieldList()).write(builder);
 		getWriter(node().getFieldList().getPublicFieldList()).write(builder);
+		getWriter(node().getFieldList().getPrivateStaticFieldList()).write(builder);
+		getWriter(node().getFieldList().getPublicStaticFieldList()).write(builder);
 		
 		builder.append('\n');
 		
@@ -33,19 +40,34 @@ public abstract class ClassDeclarationWriter extends InstanceDeclarationWriter
 
 //		writeName(builder).append(".prototype.constructor = ").append(writeName()).append(";\n\n");
 		builder.append("\n");
-		
+
+		getWriter(node().getConstructorList()).write(builder);
 		getWriter(node().getDestructorList()).write(builder);
 		getWriter(node().getMethodList()).write(builder);
 		getWriter(node().getPropertyMethodList()).write(builder);
 		getWriter(node().getHiddenMethodList()).write(builder);
-		getWriter(node().getConstructorList()).write(builder);
 
-		if (node().encapsulatingClass != null) {
-			writeUseExpression(builder).append(" = ");
-			writeName(builder).append(";\n\n");
+		for (ClassDeclaration c : node().getEncapsulatedClasses()) {
+			builder.append("static ");
+			getWriter(c).writeName(builder).append("\n");
 		}
 
 		builder.append("\n}\n\n");
+
+		return builder;
+	}
+
+	public StringBuilder writeEncapsulationAssignments() {
+		return writeEncapsulationAssignments(new StringBuilder());
+	}
+
+	public StringBuilder writeEncapsulationAssignments(StringBuilder builder) {
+		for (ClassDeclaration c : node().getEncapsulatedClasses()) {
+			getWriter(node()).writeName(builder).append(".");
+			getWriter(c).writeName(builder);
+			builder.append(" = ");
+			getWriter(c).writeName(builder).append(";\n");
+		}
 
 		return builder;
 	}

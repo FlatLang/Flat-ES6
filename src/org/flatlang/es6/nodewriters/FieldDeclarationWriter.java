@@ -17,6 +17,10 @@ public abstract class FieldDeclarationWriter extends InstanceDeclarationWriter
 //
 //		builder.append(".");
 
+		if (node().isStatic()) {
+			builder.append("static ");
+		}
+
 		return super.write(builder);
 	}
 }
