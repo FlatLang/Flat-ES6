@@ -19,7 +19,9 @@ public abstract class ElseStatementWriter extends ControlStatementWriter
 			{
 				getWriter(child).writeExpression(builder).append(' ');
 
-				return getWriter(child.getScope()).write(builder);
+				getWriter(child.getScope()).write(builder, true, false);
+
+				return builder.append(node().getNextNode() instanceof ElseStatement ? ' ' : '\n');
 			}
 		}
 		

@@ -21,7 +21,7 @@ public abstract class CaseWriter extends MatchCaseWriter
 			
 			builder.append("case ").append(getWriter(value).writeExpression()).append(":\n");
 			
-			getWriter(scope).write(builder, false);
+			getWriter(scope).write(builder, false, false);
 			
 			if (node().requiresBreak())
 			{
@@ -58,7 +58,7 @@ public abstract class CaseWriter extends MatchCaseWriter
 			
 			builder.append("if (").append(fall).append(condition).append(") {\n");
 			
-			getWriter(scope).write(builder, false);
+			getWriter(scope).write(builder, false, false);
 			
 			if (node().getParentMatch().requiresLoopFacade() && node().requiresBreak())
 			{
