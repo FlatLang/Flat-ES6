@@ -11,8 +11,6 @@ public abstract class LocalDeclarationWriter extends VariableDeclarationWriter
 	{
 		builder.append("var ");
 		
-		writeName(builder);
-		
-		return builder.append(" = null;\n");
+		return writeExpression(builder).append(";\n");
 	}
 }

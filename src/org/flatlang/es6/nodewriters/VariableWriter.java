@@ -66,20 +66,4 @@ public abstract class VariableWriter extends IdentifierWriter
 
 		return super.writeExpression(builder);
 	}
-
-	@Override
-	public void writeNullFallbackPrefix(StringBuilder builder, int skipCount) {
-		if (!(node().declaration instanceof ReferenceParameter) || !node().doesAccess()) {
-			super.writeNullFallbackPrefix(builder, skipCount);
-		} else {
-			super.writeNullFallbackPrefix(builder, skipCount + 1);
-		}
-	}
-
-	@Override
-	public void writeNullFallbackPostfix(StringBuilder builder) {
-		if (!(node().declaration instanceof ReferenceParameter) || !node().doesAccess()) {
-			super.writeNullFallbackPostfix(builder);
-		}
-	}
 }

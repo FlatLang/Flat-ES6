@@ -21,24 +21,15 @@ public abstract class IdentifierWriter extends ValueWriter implements Accessible
 				.forEach(n -> builder.append("(await "));
 		}
 
-		writeNullFallbackPrefix(builder);
-
 		writeUseExpression(builder);
 
 		if (node().isAwait()) {
 			builder.append(')');
 		}
 
-		writeNullFallbackPostfix(builder);
-
 		writeAccessedExpression(builder);
 
 		return builder;
-	}
-
-	@Override
-	public void writeNullFallbackPrefix(StringBuilder builder, int skipCount) {
-		AccessibleWriter.super.writeNullFallbackPrefix(builder, skipCount);
 	}
 
 	public StringBuilder writeUseExpression(StringBuilder builder)

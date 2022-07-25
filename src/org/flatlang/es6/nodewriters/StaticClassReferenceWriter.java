@@ -29,16 +29,6 @@ public abstract class StaticClassReferenceWriter extends IIdentifierWriter
 	}
 
 	@Override
-	public void writeNullFallbackPrefix(StringBuilder builder, int skipCount) {
-		super.writeNullFallbackPrefix(builder, skipCount + 1);
-	}
-
-	@Override
-	public void writeNullFallbackPostfix(StringBuilder builder) {
-
-	}
-
-	@Override
 	public boolean shouldFallbackToNull() {
 		if (node().doesAccess()) {
 			Writer writer = getWriter(node().getReturnedNode());
