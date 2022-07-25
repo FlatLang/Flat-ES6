@@ -9,7 +9,7 @@ public abstract class LocalDeclarationWriter extends VariableDeclarationWriter
 	@Override
 	public StringBuilder write(StringBuilder builder)
 	{
-		builder.append("var ");
+		builder.append("let ");
 		
 		return writeExpression(builder).append(";\n");
 	}
