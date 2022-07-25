@@ -42,7 +42,7 @@ public abstract class StaticBlockWriter extends NodeWriter
 			}
 		}
 
-		getWriter(scope).write(builder, false, true);
+		getWriter(scope).write(builder, false, false);
 		
 		return builder.append("}\n}\n");
 	}

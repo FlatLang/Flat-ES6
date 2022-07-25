@@ -13,53 +13,10 @@ public abstract class BodyMethodDeclarationWriter extends FlatMethodDeclarationW
 	@Override
 	public StringBuilder write(StringBuilder builder)
 	{
-		writeMethod(builder);
-
-		if (shouldUseStatic() && !nonStaticOverloadExists()) {
-			writeSignature(builder, false, true).append(" {\n");
-			builder.append("return ");
-			if (node().isAsync()) {
-				builder.append("await ");
-			}
-			getWriter(node().getParentClass()).writeName(builder).append(".");
-			writeSignature(builder, false, false).append(";\n");
-			builder.append("}\n\n");
-		}
-
-		return builder;
-	}
-
-	public StringBuilder writeMethod(StringBuilder builder)
-	{
-		// FIXME: This should be handled better. Static and non-static mixed overloads should be able to coexist easier
-		if (node().isStatic()) {
-            if (nonStaticOverloadExists()) {
-				writeSignature(builder, true, true).append(" ");
-
-                writeBody(builder);
-
-                return builder.append("\n\n");
-            }
-		}
-
 		writeSignature(builder, true, true).append(" ");
-
 		writeBody(builder);
 
-		if (node().isStatic()) {
-//			builder.append(";\n\n");
-//			writeAssignedVariable(builder).append(" = ");
-//			writeAssignedVariable(builder, true);
-		}
-
-		return builder.append("\n\n");
-	}
-
-	public boolean nonStaticOverloadExists() {
-		return Arrays.stream(node().getDeclaringClass().getMethodList().getMethods())
-			.filter(m -> m != node())
-			.filter(m -> m.getName().equals(node().getName()))
-			.anyMatch(m -> !m.isStatic());
+		return builder.append("\n");
 	}
 
 	public boolean shouldUseStatic() {

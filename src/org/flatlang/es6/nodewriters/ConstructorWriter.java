@@ -53,7 +53,7 @@ public abstract class ConstructorWriter extends BodyMethodDeclarationWriter
 
 		writeBody(builder);
 
-		return builder.append("\n\n");
+		return builder.append("\n");
 	}
 
 //	@Override
