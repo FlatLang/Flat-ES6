@@ -903,17 +903,6 @@ public class Writer
 				}
 			};
 		}
-		else if (node instanceof IValue)
-		{
-			return new IValueWriter()
-			{
-				@Override
-				public IValue node()
-				{
-					return (IValue)node;
-				}
-			};
-		}
 		else if (node instanceof IfStatement)
 		{
 			return new IfStatementWriter()
@@ -933,6 +922,17 @@ public class Writer
 				public ControlStatement node()
 				{
 					return (ControlStatement)node;
+				}
+			};
+		}
+		else if (node instanceof IValue)
+		{
+			return new IValueWriter()
+			{
+				@Override
+				public IValue node()
+				{
+					return (IValue)node;
 				}
 			};
 		}
