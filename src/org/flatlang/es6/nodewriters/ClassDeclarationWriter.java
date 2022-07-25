@@ -22,39 +22,46 @@ public abstract class ClassDeclarationWriter extends InstanceDeclarationWriter
 
 		builder.append("{\n");
 
-		getWriter(node().getFieldList().getPrivateFieldList()).write(builder);
-		getWriter(node().getFieldList().getPublicFieldList()).write(builder);
-		getWriter(node().getFieldList().getPrivateStaticFieldList()).write(builder);
-		getWriter(node().getFieldList().getPublicStaticFieldList()).write(builder);
-		
-		builder.append('\n');
-		
+		StringBuilder contents = new StringBuilder();
+		getWriter(node().getFieldList().getPrivateFieldList()).write(contents);
+		getWriter(node().getFieldList().getPublicFieldList()).write(contents);
+		getWriter(node().getFieldList().getPrivateStaticFieldList()).write(contents);
+		getWriter(node().getFieldList().getPublicStaticFieldList()).write(contents);
+
 		node().forEachVisibleChild(child -> {
-			builder.append('\n').append(getWriter(child).write());
+			contents.append('\n').append(getWriter(child).write());
 		});
-		
 
-//		if (node().doesExtendClass()) {
-//			writeName(builder).append(".prototype = Object.create(").append(getWriter(node().getExtendedClassDeclaration()).writeName()).append(".prototype);\n");
-//		}
+		StringBuilder constructors = getWriter(node().getConstructorList()).write();
+		StringBuilder destructors = getWriter(node().getDestructorList()).write();
+		StringBuilder methods = getWriter(node().getMethodList()).write();
+		StringBuilder propertyMethods = getWriter(node().getPropertyMethodList()).write();
+		StringBuilder hiddenMethods = getWriter(node().getHiddenMethodList()).write();
 
-//		writeName(builder).append(".prototype.constructor = ").append(writeName()).append(";\n\n");
-		builder.append("\n");
-
-		getWriter(node().getConstructorList()).write(builder);
-		getWriter(node().getDestructorList()).write(builder);
-		getWriter(node().getMethodList()).write(builder);
-		getWriter(node().getPropertyMethodList()).write(builder);
-		getWriter(node().getHiddenMethodList()).write(builder);
-
-		for (ClassDeclaration c : node().getEncapsulatedClasses()) {
-			builder.append("static ");
-			getWriter(c).writeName(builder).append("\n");
+		if (constructors.length() > 0) {
+			contents.append('\n').append(constructors);
+		}
+		if (destructors.length() > 0) {
+			contents.append('\n').append(destructors);
+		}
+		if (methods.length() > 0) {
+			contents.append('\n').append(methods);
+		}
+		if (propertyMethods.length() > 0) {
+			contents.append('\n').append(propertyMethods);
+		}
+		if (hiddenMethods.length() > 0) {
+			contents.append('\n').append(hiddenMethods);
 		}
 
-		builder.append("\n}\n\n");
+		for (ClassDeclaration c : node().getEncapsulatedClasses()) {
+			contents.append("static ");
+			getWriter(c).writeName(contents).append("\n");
+		}
 
-		return builder;
+		builder.append(contents.toString().trim());
+
+		return builder.append("\n}\n");
 	}
 
 	public StringBuilder writeEncapsulationAssignments() {

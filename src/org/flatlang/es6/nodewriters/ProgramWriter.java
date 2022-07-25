@@ -49,36 +49,60 @@ public abstract class ProgramWriter extends TypeListWriter
 		
 		ClassDeclaration[] classes = getClassesHierarchicalInOrder();
 
-		builder.append("\n" +
-			"\n" +
-			"function __copyPrototype(value, prot) {\n" +
-			"\tconst funcs = Object.getOwnPropertyNames(prot);\n" +
-			"\tfor (let i = 0; i < funcs.length; i++) {\n" +
-			"\t\tif (!value.prototype.hasOwnProperty(funcs[i])) {\n" +
-			"\t\t\tvalue.prototype[funcs[i]] = prot[funcs[i]];\n" +
-			"\t\t}\n" +
-			"\t}\n" +
-			"}\n\n");
+		builder
+			.append("function __copyStaticFunctions() {\n")
+			.append(  "[].slice.call(arguments).forEach(f =>\n")
+			.append(  "Object.getOwnPropertyNames(f)\n")
+			.append(  "  .filter(d => !f.prototype.hasOwnProperty(d))\n")
+			.append(  "  .forEach(d => f.prototype[d] = f[d])\n")
+			.append(  ");\n")
+			.append("}\n\n");
+
+		builder
+			.append("function __copyPrototype(f, ...g) {\n")
+			.append(  "let v = f.prototype;\n")
+			.append(  "g.map(a => a.prototype)\n")
+			.append(  "  .forEach(p => Object.getOwnPropertyNames(p)\n")
+			.append(  "  .filter(d => !v.hasOwnProperty(d))\n")
+			.append(  "  .forEach(d => v[d] = p[d])\n")
+			.append(  ");\n")
+			.append(  "return __copyPrototype;\n")
+			.append("}\n\n");
 
 		builder.append("var flat_null = undefined;\n\n");
 
 		HashSet<String> printedClasses = new HashSet<>();
 
+		int classIndex = 0;
 		for (ClassDeclaration child : classes)
 		{
+			if (classIndex++ > 0) {
+				builder.append("\n");
+			}
 			printClass(builder, printedClasses, child);
 		}
 
-		for (ClassDeclaration child : classes)
-		{
-			Arrays.stream(child.getImplementedInterfaces()).forEach(i -> {
-				builder.append("__copyPrototype(")
-					.append(getWriter(child).writeName()).append(", ")
-					.append(getWriter(i).writeName()).append(".prototype);\n");
-			});
+		builder.append("\n");
+		builder.append("__copyStaticFunctions(");
+		classIndex = 0;
+		for (ClassDeclaration child : classes) {
+			if (classIndex++ > 0) {
+				builder.append(", ");
+			}
+			builder.append(getWriter(child).writeName());
 		}
-
-		builder.append('\n');
+		builder.append(");\n\n");
+		builder.append("__copyPrototype");
+		for (ClassDeclaration child : classes) {
+			if (child.getImplementedInterfaces().length > 0) {
+				builder.append("\n  (").append(getWriter(child).writeName());
+				Arrays.stream(child.getImplementedInterfaces()).forEach(i -> {
+					builder.append(", ").append(getWriter(i).writeName());
+				});
+				builder.append(")");
+			}
+		}
+		builder.append(";\n\n");
 
 		for (ClassDeclaration child : classes)
 		{
@@ -101,6 +125,7 @@ public abstract class ProgramWriter extends TypeListWriter
 
 		Value flatNullString = Instantiation.decodeStatement(parent, "new Null()", Location.INVALID, true);
 
+		builder.append("\n");
 		builder.append("flat_null = ").append(getWriter(flatNullString).writeUseExpression()).append(";\n\n");
 
 		for (ClassDeclaration child : classes)
