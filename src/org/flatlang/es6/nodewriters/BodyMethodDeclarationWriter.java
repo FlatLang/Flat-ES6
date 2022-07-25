@@ -2,6 +2,7 @@ package org.flatlang.es6.nodewriters;
 
 import org.flatlang.tree.*;
 import org.flatlang.tree.annotations.AsyncAnnotation;
+import org.flatlang.tree.exceptionhandling.Throw;
 import org.flatlang.tree.lambda.LambdaMethodDeclaration;
 
 import java.util.Arrays;
@@ -16,6 +17,10 @@ public abstract class BodyMethodDeclarationWriter extends FlatMethodDeclarationW
 		writeSignature(builder, true, true).append(" ");
 		writeBody(builder);
 
+		if (shouldUseShorthand()) {
+			builder.append(";");
+		}
+
 		return builder.append("\n");
 	}
 
@@ -23,18 +28,55 @@ public abstract class BodyMethodDeclarationWriter extends FlatMethodDeclarationW
 		return node().isStatic() || node() instanceof InitializationMethod || node() instanceof AssignmentMethod || node() instanceof AnonymousCompilerMethod || node() instanceof ExtensionMethodDeclaration;
 	}
 
+	public boolean shouldUseSelfVariable() {
+		return node() instanceof InitializationMethod || node() instanceof LambdaMethodDeclaration == false && node().whereChildOfType(Closure.class, BodyMethodDeclarationWriter::isLambda);
+	}
+
+	public boolean shouldUseShorthand() {
+		if (
+			!node().isExtension() &&
+				!shouldUseSelfVariable() &&
+				node().getScope().getNumVisibleChildren() == 1 &&
+				node().getScope().getVariableList().getNumVisibleChildren() == 0
+		) {
+			Node child = node().getScope().getVisibleChild(0);
+
+			if (child instanceof Return) {
+				Return r = (Return) child;
+
+				if (r.getValueNode() instanceof Throw == false) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	public StringBuilder writeSignature(StringBuilder builder, boolean checkStatic, boolean checkAsync) {
 		if (checkStatic && shouldUseStatic()) {
 			builder.append("static ");
 		}
 
-		if (checkAsync && node().containsAnnotationOfType(AsyncAnnotation.class)) {
+		if (!shouldUseShorthand() && checkAsync && node().isAsync()) {
 			builder.append("async ");
 		}
 
 		writeName(builder);
 
+		if (shouldUseShorthand()) {
+			builder.append(" = ");
+		}
+
+		if (shouldUseShorthand() && checkAsync && node().isAsync()) {
+			builder.append("async ");
+		}
+
 		getWriter(node().getParameterList()).write(builder);
+
+		if (shouldUseShorthand()) {
+			builder.append(" =>");
+		}
 
 		return builder;
 	}
@@ -51,9 +93,16 @@ public abstract class BodyMethodDeclarationWriter extends FlatMethodDeclarationW
 
 	public StringBuilder writeBody(StringBuilder builder)
 	{
+		if (shouldUseShorthand()) {
+			Node child = node().getScope().getVisibleChild(0);
+			if (child instanceof Return) {
+				child = ((Return)child).getValueNode();
+			}
+			return getWriter(child).writeExpression(builder);
+		}
 		builder.append("{\n");
 
-		if (node() instanceof InitializationMethod || node() instanceof LambdaMethodDeclaration == false && node().whereChildOfType(Closure.class, BodyMethodDeclarationWriter::isLambda))
+		if (shouldUseSelfVariable())
 		{
 			builder.append("let self = this;\n\n");
 		}
