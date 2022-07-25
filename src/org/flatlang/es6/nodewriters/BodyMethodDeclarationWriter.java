@@ -34,6 +34,7 @@ public abstract class BodyMethodDeclarationWriter extends FlatMethodDeclarationW
 
 	public boolean shouldUseShorthand() {
 		if (
+			false &&
 			!node().isExtension() &&
 				!shouldUseSelfVariable() &&
 				node().getScope().getNumVisibleChildren() == 1 &&
