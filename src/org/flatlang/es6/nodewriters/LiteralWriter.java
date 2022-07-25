@@ -12,6 +12,9 @@ public abstract class LiteralWriter extends IValueWriter implements AccessibleWr
 		{
 			getWriter(node().getStringInstantiation()).writeExpression(builder);
 		}
+		else if (node().isNullLiteral()) {
+			builder.append("flat_null");
+		}
 		else
 		{
 			builder.append(node().value);
@@ -28,24 +31,10 @@ public abstract class LiteralWriter extends IValueWriter implements AccessibleWr
 			return writeInstanceClosure(builder);
 		}
 
-		writeNullFallbackPrefix(builder);
-
 		writeUseExpression(builder);
-
-		writeNullFallbackPostfix(builder);
 
 		writeAccessedExpression(builder);
 
 		return builder;
-	}
-
-	@Override
-	public void writeNullFallbackPrefix(StringBuilder builder, int skipCount) {
-		AccessibleWriter.super.writeNullFallbackPrefix(builder, skipCount + 1);
-	}
-
-	@Override
-	public void writeNullFallbackPostfix(StringBuilder builder) {
-
 	}
 }

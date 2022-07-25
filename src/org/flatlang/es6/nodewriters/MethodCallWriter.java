@@ -101,11 +101,4 @@ public abstract class MethodCallWriter extends VariableWriter
 			return builder.append(node().getName());
 		}
 	}
-
-	@Override
-	public void writeNullFallbackPostfix(StringBuilder builder) {
-		if (!(node().getFlatMethod() instanceof Constructor)) {
-			super.writeNullFallbackPostfix(builder);
-		}
-	}
 }

@@ -25,7 +25,7 @@ public abstract class VariableDeclarationWriter extends IIdentifierWriter
 		}
 		else
 		{
-			builder.append("null");
+			builder.append("flat_null");
 		}
 		
 		return builder;
