@@ -12,6 +12,12 @@ public abstract class AssignmentWriter extends ValueWriter
 		ClassDeclaration set = node().getAssigneeNode().getReturnedNode().getTypeClass();
 		ClassDeclaration value = node().getAssignmentNode().getReturnedNode().getTypeClass();
 
+		if (node().wasDeclaration &&
+			node().getAssignedNode().getDeclaration().isPropertyTrue("fromAssignment") &&
+			!node().getAssignedNode().getDeclaration().isPropertyTrue("requiresPrecedingDeclaration")) {
+			builder.append("let ");
+		}
+
 		if (!node().getAssignmentNode().getReturnedNode().isPrimitiveArray() && set != null && value != null)
 		{
 			ClassDeclaration integerClass = node().getProgram().getClassDeclaration("flatlang/primitive/number/Integer");

@@ -13,7 +13,9 @@ public abstract class ForLoopWriter extends LoopWriter
 		Node       condition      = node().getCondition();
 		Node       update         = node().getLoopUpdate();
 
-		getWriter(node().elementDeclaration).write(builder);
+		if (!node().elementDeclaration.isPropertyTrue("fromAssignment")) {
+			getWriter(node().elementDeclaration).write(builder);
+		}
 
 		if (initialization != null)
 		{
