@@ -5,6 +5,8 @@ import org.flatlang.Flat;
 
 public class ES6CompileEngine extends CompileEngine
 {
+	public static final boolean INLINE_ARRAY_INITIALIZERS = false;
+
 	public boolean localScope = false;
 	
 	public String scopeExportName;

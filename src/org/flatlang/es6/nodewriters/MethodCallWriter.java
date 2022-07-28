@@ -1,7 +1,11 @@
 package org.flatlang.es6.nodewriters;
 
+import org.flatlang.Flat;
+import org.flatlang.es6.engines.ES6CompileEngine;
 import org.flatlang.tree.*;
 import org.flatlang.tree.annotations.AsyncAnnotation;
+import org.flatlang.tree.variables.Array;
+import org.flatlang.util.SyntaxUtils;
 
 public abstract class MethodCallWriter extends VariableWriter
 {
@@ -11,6 +15,32 @@ public abstract class MethodCallWriter extends VariableWriter
 	public StringBuilder writeUseExpression(StringBuilder builder)
 	{
 		CallableMethod callable = node().getCallableDeclaration();
+
+		if (ES6CompileEngine.INLINE_ARRAY_INITIALIZERS && callable.toDeclaration().getProperty("array") != null) {
+			builder.append("FlatArray.construct1([");
+
+			Array array = (Array) callable.toDeclaration().getProperty("array");
+			TypeList<Value> initValues = array.getInitializerValues();
+
+			for (int i = 0; i < initValues.getNumChildren(); i++) {
+				if (i > 0) {
+					builder.append(", ");
+				}
+
+				Value child = initValues.getChild(i);
+				child.parent = node().getArgumentList();
+
+				Flat.debuggingBreakpoint(child.getReturnedNode() instanceof Identifier && ((Identifier)child.getReturnedNode()).getName().equals("class"));
+
+				if (child.getReturnedNode().isPrimitive()) {
+					child = SyntaxUtils.autoboxPrimitive(child, child.getReturnedNode().getType());
+				}
+
+				getWriter(child).writeExpression(builder);
+			}
+
+			return builder.append("], ").append(initValues.getNumVisibleChildren()).append(")");
+		}
 
 		if (callable instanceof InitializationMethod)
 		{
