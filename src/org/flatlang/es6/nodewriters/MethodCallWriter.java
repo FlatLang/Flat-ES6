@@ -30,8 +30,6 @@ public abstract class MethodCallWriter extends VariableWriter
 				Value child = initValues.getChild(i);
 				child.parent = node().getArgumentList();
 
-				Flat.debuggingBreakpoint(child.getReturnedNode() instanceof Identifier && ((Identifier)child.getReturnedNode()).getName().equals("class"));
-
 				if (child.getReturnedNode().isPrimitive()) {
 					child = SyntaxUtils.autoboxPrimitive(child, child.getReturnedNode().getType());
 				}
