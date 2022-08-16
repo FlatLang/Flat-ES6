@@ -1,7 +1,7 @@
 package org.flatlang.es6.nodewriters;
 
 import org.flatlang.es6.engines.ES6CompileEngine;
-import org.flatlang.tree.*;
+import org.flatlang.tree.AnonymousCompilerMethod;
 
 public abstract class AnonymousCompilerMethodWriter extends BodyMethodDeclarationWriter
 {
