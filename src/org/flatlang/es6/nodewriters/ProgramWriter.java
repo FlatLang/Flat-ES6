@@ -102,17 +102,7 @@ public abstract class ProgramWriter extends TypeListWriter
 				builder.append(")");
 			}
 		}
-		builder.append(";\n\n");
-
-		for (ClassDeclaration child : classes)
-		{
-			getWriter(child).writeEncapsulationAssignments(builder);
-		}
-
-		for (ClassDeclaration child : classes)
-		{
-			getWriter(child).writeStaticBlocks(builder);
-		}
+		builder.append(";\n");
 
 		Node parent = Arrays.stream(node().getChildrenOfType(FileDeclaration.class))
 			.map(f -> (FileDeclaration)f)
@@ -127,6 +117,25 @@ public abstract class ProgramWriter extends TypeListWriter
 
 		builder.append("\n");
 		builder.append("flat_null = ").append(getWriter(flatNullString).writeUseExpression()).append(";\n\n");
+
+		for (ClassDeclaration child : classes)
+		{
+			getWriter(child).writeStaticLazyDeclarations(builder);
+		}
+
+		builder.append("\n");
+
+		for (ClassDeclaration child : classes)
+		{
+			getWriter(child).writeEncapsulationAssignments(builder);
+		}
+
+		for (ClassDeclaration child : classes)
+		{
+			getWriter(child).writeStaticBlocks(builder);
+		}
+
+		builder.append("\n");
 
 		for (ClassDeclaration child : classes)
 		{
