@@ -18,7 +18,7 @@ public abstract class AccessorMethodWriter extends PropertyMethodWriter
 	@Override
 	public StringBuilder write(StringBuilder builder) {
 		if (node().getLazy() && !node().isStatic()) {
-			writeLazyName(builder).append(" = flat_null;\n");
+			writeLazyName(builder).append(" = undefined;\n");
 		}
 
 		return super.write(builder);
