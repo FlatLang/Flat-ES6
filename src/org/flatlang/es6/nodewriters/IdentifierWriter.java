@@ -46,6 +46,8 @@ public abstract class IdentifierWriter extends ValueWriter implements Accessible
 	{
 		switch (node().getName()) {
 			case "arguments": return builder.append("_js_arguments");
+			case "public": return builder.append("_js_public");
+			case "private": return builder.append("_js_private");
 			case "package": return builder.append("_js_package");
 			case "class": return builder.append("_js_class");
 			case "default": return builder.append("_js_default");
