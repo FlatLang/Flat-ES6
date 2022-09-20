@@ -9,8 +9,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: flat:flat-ast:1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: flat:flat-cli:1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: flat:flat-util:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: flat:flat:1.0-SNAPSHOT" level="project" />
   </component>
 </module>

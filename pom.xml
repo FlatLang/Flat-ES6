@@ -17,12 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>flat</groupId>
-            <artifactId>flat-ast</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>flat</groupId>
-            <artifactId>flat-util</artifactId>
+            <artifactId>flat</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
