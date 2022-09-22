@@ -110,6 +110,7 @@ public abstract class ProgramWriter extends TypeListWriter
 			.filter(Objects::nonNull)
 			.flatMap(c -> Arrays.stream(c.getMethods()))
 			.filter(Node::isUserMade)
+			.filter(m -> !(m.getParentClass() instanceof InterfaceDeclaration))
 			.findFirst()
 			.get();
 
