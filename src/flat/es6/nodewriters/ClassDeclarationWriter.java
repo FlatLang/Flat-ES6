@@ -181,6 +181,10 @@ public abstract class ClassDeclarationWriter extends InstanceDeclarationWriter
 			return builder.append(node().getClassLocation().replaceAll("[^\\w\\d_]", "_"));
 		}
 
+		if (node().encapsulatingClass != null) {
+			return builder.append(node().getClassLocation(true, false).replaceAll("[^\\w\\d_]", "_"));
+		}
+
 		return super.writeName(builder);
 	}
 
