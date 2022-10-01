@@ -10,13 +10,8 @@ public abstract class SuperWriter extends PriorityWriter
 	@Override
 	public StringBuilder writeExpression(StringBuilder builder)
 	{
-		builder.append("this.");
-		
-		if (node().getAccessedNode() instanceof MethodCall)
-		{
-			builder.append("super_");
-		}
-		
+		builder.append("super.");
+
 		return builder.append(writeAccessedExpression(false));
 	}
 }
