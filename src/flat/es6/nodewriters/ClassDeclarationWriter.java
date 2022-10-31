@@ -2,6 +2,7 @@ package flat.es6.nodewriters;
 
 import flat.tree.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
@@ -59,6 +60,16 @@ public abstract class ClassDeclarationWriter extends InstanceDeclarationWriter
 			getWriter(c).writeName(contents).append("\n");
 		}
 
+		if (node().getFileDeclaration().getName().equals(node().getName())) {
+			Arrays.stream(node().getFileDeclaration().getClassDeclarations())
+				.filter(c -> c.encapsulatingClass == null)
+				.filter(c -> c != node())
+				.forEach(c -> {
+					contents.append("static ");
+					getWriter(c).writeName(contents).append("\n");
+				});
+		}
+
 		builder.append(contents.toString().trim());
 
 		return builder.append("\n}\n");
@@ -70,13 +81,24 @@ public abstract class ClassDeclarationWriter extends InstanceDeclarationWriter
 
 	public StringBuilder writeEncapsulationAssignments(StringBuilder builder) {
 		for (ClassDeclaration c : node().getEncapsulatedClasses()) {
-			getWriter(node()).writeName(builder).append(".");
-			getWriter(c).writeName(builder);
-			builder.append(" = ");
-			getWriter(c).writeName(builder).append(";\n");
+			writeEncapsulationAssignment(builder, c);
+		}
+
+		if (node().getFileDeclaration().getName().equals(node().getName())) {
+			Arrays.stream(node().getFileDeclaration().getClassDeclarations())
+				.filter(c -> c.encapsulatingClass == null)
+				.filter(c -> c != node())
+				.forEach(c -> writeEncapsulationAssignment(builder, c));
 		}
 
 		return builder;
+	}
+
+	private void writeEncapsulationAssignment(StringBuilder builder, ClassDeclaration c) {
+		getWriter(node()).writeName(builder).append(".");
+		getWriter(c).writeName(builder);
+		builder.append(" = ");
+		getWriter(c).writeName(builder).append(";\n");
 	}
 
 	public StringBuilder writeUseExpression(StringBuilder builder) {
