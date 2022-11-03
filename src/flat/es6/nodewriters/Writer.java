@@ -705,6 +705,17 @@ public class Writer
 				}
 			};
 		}
+		else if (node instanceof ReifiedParameterAccess)
+		{
+			return new ReifiedParameterAccessWriter()
+			{
+				@Override
+				public ReifiedParameterAccess node()
+				{
+					return (ReifiedParameterAccess)node;
+				}
+			};
+		}
 		else if (node instanceof StaticFieldList)
 		{
 			return new StaticFieldListWriter()

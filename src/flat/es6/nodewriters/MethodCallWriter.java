@@ -1,11 +1,14 @@
 package flat.es6.nodewriters;
 
-import flat.Flat;
 import flat.es6.engines.ES6CompileEngine;
 import flat.tree.*;
 import flat.tree.annotations.AsyncAnnotation;
+import flat.tree.generics.GenericTypeParameter;
 import flat.tree.variables.Array;
 import flat.util.SyntaxUtils;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class MethodCallWriter extends VariableWriter
 {
@@ -93,9 +96,40 @@ public abstract class MethodCallWriter extends VariableWriter
 					builder.append(", ");
 				}
 
-				return getWriter(node().getArgumentList()).write(builder, false).append(')');
+				getWriter(node().getArgumentList()).write(builder, false);
+
+				return builder.append(')');
 			} else {
-				getWriter(node().getArgumentList()).write(builder);
+				builder.append("(");
+				getWriter(node().getArgumentList()).write(builder, false);
+
+				if (node().getFlatMethod() != null) {
+					Value[] values = node().getArgumentList().getArgumentsInOrder(node().getFlatMethod());
+
+					for (int i = values.length; i < node().getFlatMethod().getParameterList().getNumVisibleChildren(); i++) {
+						if (i > 0) {
+							builder.append(", ");
+						}
+
+						builder.append("undefined");
+					}
+				}
+
+				if (callable instanceof Constructor) {
+					List<GenericTypeParameter> reifiedParams = callable.getTypeClass().getReifiedParameters();
+
+					if (reifiedParams.size() > 0) {
+						if (node().getArgumentList().getNumVisibleChildren() > 0) {
+							builder.append(", ");
+						}
+
+						builder.append(reifiedParams.stream()
+							.map(p -> getWriter(p.getCorrespondingArgument(node()).getTypeClass()).writeUseExpression() + ".accessor__js_class()")
+							.collect(Collectors.joining(", ")));
+					}
+				}
+
+				return builder.append(")");
 			}
 		}
 
