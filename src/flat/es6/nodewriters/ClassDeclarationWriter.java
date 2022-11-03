@@ -61,13 +61,10 @@ public abstract class ClassDeclarationWriter extends InstanceDeclarationWriter
 		}
 
 		if (node().getFileDeclaration().getName().equals(node().getName())) {
-			Arrays.stream(node().getFileDeclaration().getClassDeclarations())
-				.filter(c -> c.encapsulatingClass == null)
-				.filter(c -> c != node())
-				.forEach(c -> {
-					contents.append("static ");
-					getWriter(c).writeName(contents).append("\n");
-				});
+			Arrays.stream(node().getSiblingClasses()).forEach(c -> {
+				contents.append("static ");
+				getWriter(c).writeName(contents).append("\n");
+			});
 		}
 
 		builder.append(contents.toString().trim());
