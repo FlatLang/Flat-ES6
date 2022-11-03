@@ -4,6 +4,7 @@ import flat.tree.*;
 import flat.tree.Package;
 import flat.tree.annotations.Annotation;
 import flat.tree.exceptionhandling.*;
+import flat.tree.generics.GenericTypeParameter;
 import flat.tree.lambda.LambdaMethodDeclaration;
 import flat.tree.match.*;
 import flat.tree.variables.*;
@@ -936,6 +937,17 @@ public class Writer
 				}
 			};
 		}
+		else if (node instanceof GenericTypeParameter)
+		{
+			return new GenericTypeParameterWriter()
+			{
+				@Override
+				public GenericTypeParameter node()
+				{
+					return (GenericTypeParameter)node;
+				}
+			};
+		}
 		else if (node instanceof IValue)
 		{
 			return new IValueWriter()
@@ -1309,11 +1321,16 @@ public class Writer
 		return (InstantiationWriter)getWriter((Node)node);
 	}
 	
+	public static GenericTypeParameterWriter getWriter(final GenericTypeParameter node)
+	{
+		return (GenericTypeParameterWriter)getWriter((Node)node);
+	}
+
 	public static IValueWriter getWriter(final IValue node)
 	{
 		return (IValueWriter)getWriter((Node)node);
 	}
-	
+
 	public static LambdaMethodDeclarationWriter getWriter(final LambdaMethodDeclaration node)
 	{
 		return (LambdaMethodDeclarationWriter)getWriter((Node)node);

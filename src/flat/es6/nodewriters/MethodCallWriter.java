@@ -124,7 +124,7 @@ public abstract class MethodCallWriter extends VariableWriter
 						}
 
 						builder.append(reifiedParams.stream()
-							.map(p -> getWriter(p.getCorrespondingArgument(node()).getTypeClass()).writeUseExpression() + ".accessor__js_class()")
+							.map(p -> getWriter(p).writeReifiedAccess(node()))
 							.collect(Collectors.joining(", ")));
 					}
 				}
