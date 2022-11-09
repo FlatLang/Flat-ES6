@@ -33,10 +33,10 @@ public abstract class VariableWriter extends IdentifierWriter
 				{
 					if (!(node().getDeclaration() instanceof ReferenceParameter))
 					{
-						if (node().getParentMethod() instanceof LambdaMethodDeclaration) {
-							builder.append("self");
-						} else if (declaration instanceof InstanceDeclaration && ((InstanceDeclaration) declaration).isStatic()) {
+						if (declaration instanceof InstanceDeclaration && ((InstanceDeclaration) declaration).isStatic()) {
 							getWriter(declaration.getDeclaringClass()).writeUseExpression(builder);
+						} else if (node().getParentMethod() instanceof LambdaMethodDeclaration) {
+							builder.append("self");
 						} else {
 							builder.append("this");
 						}
