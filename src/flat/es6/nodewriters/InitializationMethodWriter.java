@@ -28,12 +28,6 @@ public abstract class InitializationMethodWriter extends BodyMethodDeclarationWr
 	}
 
 	@Override
-	public StringBuilder writeSuperName(StringBuilder builder)
-	{
-		return writeName(builder);
-	}
-	
-	@Override
 	public StringBuilder writeName(StringBuilder builder)
 	{
 		return builder.append("__init").append(writeOverload());

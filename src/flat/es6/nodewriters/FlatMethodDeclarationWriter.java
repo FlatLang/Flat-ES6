@@ -56,17 +56,7 @@ public abstract class FlatMethodDeclarationWriter extends MethodDeclarationWrite
 //
 //		return builder.append(".").append(writeName());
 //	}
-	
-	public StringBuilder writeSuperName()
-	{
-		return writeSuperName(new StringBuilder());
-	}
-	
-	public StringBuilder writeSuperName(StringBuilder builder)
-	{
-		return writeName(builder).append("_base").append(getWriter(node().getDeclaringClass()).writeName());
-	}
-	
+
 //	public StringBuilder writePrototypeAssignment(ClassDeclaration clazz)
 //	{
 //		return writePrototypeAssignment(new StringBuilder(), clazz);

@@ -154,11 +154,7 @@ public abstract class MethodCallWriter extends VariableWriter
 		CallableMethod callable = node().getCallableDeclaration();
 
 		if (callable instanceof MethodDeclaration) {
-			if (node().isSuperCall()) {
-				return getWriter((FlatMethodDeclaration) callable).writeSuperName(builder);
-			} else {
-				return getWriter((MethodDeclaration) callable).writeName(builder);
-			}
+			return getWriter((MethodDeclaration) callable).writeName(builder);
 		} else {
 			return builder.append(node().getName());
 		}
