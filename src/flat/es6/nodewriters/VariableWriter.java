@@ -53,12 +53,23 @@ public abstract class VariableWriter extends IdentifierWriter
 
 	@Override
 	public StringBuilder writeUseExpression(StringBuilder builder) {
+		boolean lazyParameter = node().getDeclaration().containsAnnotationOfType(LazyAnnotation.class);
+		boolean asyncMethod = node().getParentMethod() != null && node().getParentMethod().isAsync();
+
+		if (lazyParameter && asyncMethod) {
+			builder.append("(await ");
+		}
+
 		writeUsePrefix(builder);
 
 		super.writeUseExpression(builder);
 
-		if (node().getDeclaration().containsAnnotationOfType(LazyAnnotation.class)) {
+		if (lazyParameter) {
 			builder.append("()");
+
+			if (asyncMethod) {
+				builder.append(")");
+			}
 		}
 
 		return builder;
