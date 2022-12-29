@@ -31,6 +31,10 @@ public abstract class MethodCallArgumentListWriter extends ArgumentListWriter
 			boolean lazyParameter = method.getParameterList().getParameter(i).containsAnnotationOfType(LazyAnnotation.class);
 
 			if (lazyParameter) {
+				if (node().getParentMethod().isAsync()) {
+					builder.append("async ");
+				}
+
 				builder.append("() => ");
 			}
 
