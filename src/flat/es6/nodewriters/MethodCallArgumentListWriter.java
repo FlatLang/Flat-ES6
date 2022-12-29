@@ -1,6 +1,7 @@
 package flat.es6.nodewriters;
 
 import flat.tree.*;
+import flat.tree.annotations.LazyAnnotation;
 
 public abstract class MethodCallArgumentListWriter extends ArgumentListWriter
 {
@@ -26,7 +27,13 @@ public abstract class MethodCallArgumentListWriter extends ArgumentListWriter
 			{
 				builder.append(", ");
 			}
-			
+
+			boolean lazyParameter = method.getParameterList().getParameter(i).containsAnnotationOfType(LazyAnnotation.class);
+
+			if (lazyParameter) {
+				builder.append("() => ");
+			}
+
 			getWriter(values[i]).writeExpression(builder);
 		}
 		

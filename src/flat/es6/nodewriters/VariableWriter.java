@@ -4,6 +4,7 @@ import flat.tree.Constructor;
 import flat.tree.InitializationMethod;
 import flat.tree.InstanceDeclaration;
 import flat.tree.ReferenceParameter;
+import flat.tree.annotations.LazyAnnotation;
 import flat.tree.lambda.LambdaMethodDeclaration;
 import flat.tree.variables.Variable;
 import flat.tree.variables.VariableDeclaration;
@@ -54,7 +55,13 @@ public abstract class VariableWriter extends IdentifierWriter
 	public StringBuilder writeUseExpression(StringBuilder builder) {
 		writeUsePrefix(builder);
 
-		return super.writeUseExpression(builder);
+		super.writeUseExpression(builder);
+
+		if (node().getDeclaration().containsAnnotationOfType(LazyAnnotation.class)) {
+			builder.append("()");
+		}
+
+		return builder;
 	}
 
 	@Override
