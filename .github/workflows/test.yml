@@ -59,7 +59,7 @@ jobs:
 
       - name: Run Stability Test
         run: |
-          node airship.js run test -f ~/.flat/packages/Stability-Test
+          node airship.js run test -f ~/.flat/packages/Stability-Test -t es6
 
       - uses: actions/upload-artifact@v3
         if: failure()
