@@ -13,6 +13,10 @@ public class Writer
 {
 	public static NodeWriter getWriter(final Node node)
 	{
+		if (node == null) {
+			return null;
+		}
+
 		if (node instanceof Annotation)
 		{
 			return new AnnotationWriter()
