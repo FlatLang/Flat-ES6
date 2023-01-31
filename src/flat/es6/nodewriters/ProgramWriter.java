@@ -1,5 +1,6 @@
 package flat.es6.nodewriters;
 
+import flat.Flat;
 import flat.error.SyntaxMessage;
 import flat.tree.*;
 import flat.util.Location;
@@ -79,6 +80,7 @@ public abstract class ProgramWriter extends TypeListWriter
 			if (classIndex++ > 0) {
 				builder.append("\n");
 			}
+			Flat.instance.log("Writing class " + child.getClassLocation());
 			printClass(builder, printedClasses, child);
 		}
 
