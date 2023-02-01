@@ -6,10 +6,9 @@ import flat.tree.*;
 import flat.util.Location;
 import flat.es6.engines.ES6CompileEngine;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import static flat.Flat.LIBRARY;
 
@@ -72,16 +71,22 @@ public abstract class ProgramWriter extends TypeListWriter
 
 		builder.append("var flat_null = undefined;\n\n");
 
-		HashSet<String> printedClasses = new HashSet<>();
+		ArrayList<ClassDeclaration> classesInOrder = new ArrayList<>();
+
+		HashSet<String> addedClasses = new HashSet<>();
+		Arrays.stream(classes).forEach(c -> addClassesInOrder(classesInOrder, addedClasses, c));
+		ConcurrentHashMap<String, StringBuilder> printedClasses = new ConcurrentHashMap<>();
+
+		Arrays.stream(classes).parallel().forEach(child -> {
+			Flat.instance.log("Writing class " + child.getClassLocation());
+			printedClasses.put(child.getClassLocation(), getWriter(child).write());
+		});
 
 		int classIndex = 0;
-		for (ClassDeclaration child : classes)
-		{
-			if (classIndex++ > 0) {
-				builder.append("\n");
-			}
-			Flat.instance.log("Writing class " + child.getClassLocation());
-			printClass(builder, printedClasses, child);
+		for (ClassDeclaration c : classesInOrder) {
+			if (classIndex++ > 0) builder.append("\n");
+
+			builder.append(printedClasses.get(c.getClassLocation()));
 		}
 
 		builder.append("\n");
@@ -206,17 +211,17 @@ public abstract class ProgramWriter extends TypeListWriter
 		}
 	}
 
-	private void printClass(StringBuilder builder, HashSet<String> printedClasses, ClassDeclaration c) {
-		if (!printedClasses.contains(c.getClassLocation())) {
-			printedClasses.add(c.getClassLocation());
+	private void addClassesInOrder(ArrayList<ClassDeclaration> classes, HashSet<String> addedClasses, ClassDeclaration c) {
+		if (!addedClasses.contains(c.getClassLocation())) {
+			addedClasses.add(c.getClassLocation());
 
 			ClassDeclaration extension = c.getExtendedClassDeclaration();
 
 			if (extension != null) {
-				printClass(builder, printedClasses, extension);
+				addClassesInOrder(classes, addedClasses, extension);
 			}
 
-			getWriter(c).write(builder);
+			classes.add(c);
 		}
 	}
 }
