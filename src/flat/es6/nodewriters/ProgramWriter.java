@@ -9,6 +9,7 @@ import flat.es6.engines.ES6CompileEngine;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static flat.Flat.LIBRARY;
 
@@ -77,7 +78,13 @@ public abstract class ProgramWriter extends TypeListWriter
 		Arrays.stream(classes).forEach(c -> addClassesInOrder(classesInOrder, addedClasses, c));
 		ConcurrentHashMap<String, StringBuilder> printedClasses = new ConcurrentHashMap<>();
 
-		Arrays.stream(classes).parallel().forEach(child -> {
+		Stream<ClassDeclaration> classStream = Arrays.stream(classes);
+
+		if (!Flat.instance.isFlagEnabled(Flat.SINGLE_THREAD)) {
+			classStream = classStream.parallel();
+		}
+
+		classStream.forEach(child -> {
 			Flat.instance.log("Writing class " + child.getClassLocation());
 			printedClasses.put(child.getClassLocation(), getWriter(child).write());
 		});
