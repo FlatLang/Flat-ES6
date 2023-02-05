@@ -15,6 +15,10 @@ public abstract class OperatorWriter extends IValueWriter
 	@Override
 	public StringBuilder writeExpression(StringBuilder builder)
 	{
+		if (node().operator.equals("!=")) {
+			return builder.append("!==");
+		}
+
 		return builder.append(node().operator);
 	}
 }
