@@ -21,7 +21,11 @@ public abstract class VariableDeclarationWriter extends IIdentifierWriter
 	{
 		if (node().isPrimitive())
 		{
-			builder.append(0);
+			if (node().getType().equals("Bool")) {
+				builder.append("false");
+			} else {
+				builder.append(0);
+			}
 		}
 		else
 		{
