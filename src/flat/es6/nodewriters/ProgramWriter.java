@@ -183,7 +183,7 @@ public abstract class ProgramWriter extends TypeListWriter
 				.append(  "});\n")
 				.append("}\n\n");
 
-			FlatMethodDeclaration method = node().getTree().getMainMethod(node().getController().codeGeneratorEngine.mainClass);
+			BodyMethodDeclaration method = node().getTree().getMainMethod(node().getController().codeGeneratorEngine.mainClass);
 
 			if (method == null) {
 				SyntaxMessage.error("Could not find main function", node().getController());
