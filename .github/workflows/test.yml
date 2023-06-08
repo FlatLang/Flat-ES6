@@ -51,15 +51,15 @@ jobs:
 
       - name: Download Stability Test
         run: |
-          node airship.js install github:FlatLang/Stability-Test
+          node airship.js install https://github.com/FlatLang/Stability-Test
 
       - name: Install Stability Test
         run: |
-          node airship.js install test -f ~/.flat/packages/Stability-Test -t es6
+          node airship.js install test -f ~/.flat/packages/github.com/FlatLang/Stability-Test/master -t es6
 
       - name: Run Stability Test
         run: |
-          node airship.js run test -f ~/.flat/packages/Stability-Test -t es6
+          node airship.js run test -f ~/.flat/packages/github.com/FlatLang/Stability-Test/master -t es6
 
       - uses: actions/upload-artifact@v3
         if: failure()
