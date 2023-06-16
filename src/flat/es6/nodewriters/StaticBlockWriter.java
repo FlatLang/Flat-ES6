@@ -2,53 +2,55 @@ package flat.es6.nodewriters;
 
 import flat.tree.*;
 
-public abstract class StaticBlockWriter extends NodeWriter
-{
-	public abstract StaticBlock node();
-	
-	@Override
-	public StringBuilder write(StringBuilder builder)
-	{
-		Scope scope = node().getScope();
+public abstract class StaticBlockWriter extends NodeWriter {
+    public abstract StaticBlock node();
 
-		if (scope.getNumVisibleChildren() == 0)
-		{
-			return builder;
-		}
+    @Override
+    public StringBuilder write(StringBuilder builder) {
+        Scope scope = node().getScope();
 
-		builder.append("var ");
-		generateMethodName(builder, node().getParentClass(), node().getIndex()).append("_initialized").append(" = false;\n");
+        if (scope.getNumVisibleChildren() == 0) {
+            return builder;
+        }
 
-		builder.append("function ");
-		generateMethodName(builder, node().getParentClass(), node().getIndex()).append("() {\n");
+        builder.append("var ");
+        generateMethodName(builder, node().getParentClass(), node().getIndex())
+            .append("_initialized").append(" = false;\n");
 
-		builder.append("if (!");
-		generateMethodName(builder, node().getParentClass(), node().getIndex()).append("_initialized");
-		builder.append(") {\n");
+        if (node().isAsync())
+            builder.append("async ");
 
-		generateMethodName(builder, node().getParentClass(), node().getIndex()).append("_initialized = true;\n");
+        builder.append("function ");
+        generateMethodName(builder, node().getParentClass(), node().getIndex()).append("() {\n");
 
-		for (ClassDeclaration c : scope.getDependencies())
-		{
-			TypeList<StaticBlock> blocks = c.getStaticBlockList();
+        builder.append("if (!");
+        generateMethodName(builder, node().getParentClass(), node().getIndex())
+            .append("_initialized");
+        builder.append(") {\n");
 
-			if (blocks.getNumVisibleChildren() > 0)
-			{
-				c.getStaticBlockList().forEachVisibleChild(block -> {
-					if (block.getScope().getNumVisibleChildren() > 0) {
-						generateMethodName(builder, c, block.getIndex()).append("();\n");
-					}
-				});
-			}
-		}
+        generateMethodName(builder, node().getParentClass(), node().getIndex())
+            .append("_initialized = true;\n");
 
-		getWriter(scope).write(builder, false, false);
-		
-		return builder.append("}\n}\n");
-	}
+        for (ClassDeclaration c : scope.getDependencies()) {
+            TypeList<StaticBlock> blocks = c.getStaticBlockList();
 
-	public static StringBuilder generateMethodName(StringBuilder builder, ClassDeclaration clazz, Integer index)
-	{
-		return builder.append(getWriter(clazz).writeName()).append(index).append(StaticBlock.C_PREFIX).append(StaticBlock.IDENTIFIER);
-	}
+            if (blocks.getNumVisibleChildren() > 0) {
+                c.getStaticBlockList().forEachVisibleChild(block -> {
+                    if (block.getScope().getNumVisibleChildren() > 0) {
+                        generateMethodName(builder, c, block.getIndex()).append("();\n");
+                    }
+                });
+            }
+        }
+
+        getWriter(scope).write(builder, false, false);
+
+        return builder.append("}\n}\n");
+    }
+
+    public static StringBuilder generateMethodName(StringBuilder builder, ClassDeclaration clazz,
+        Integer index) {
+        return builder.append(getWriter(clazz).writeName()).append(index)
+            .append(StaticBlock.C_PREFIX).append(StaticBlock.IDENTIFIER);
+    }
 }
