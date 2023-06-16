@@ -1,6 +1,7 @@
 package flat.es6.nodewriters;
 
 import flat.tree.*;
+import flat.es6.engines.ES6CompileEngine;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +14,14 @@ public abstract class ClassDeclarationWriter extends InstanceDeclarationWriter {
 
     @Override
     public StringBuilder write(StringBuilder builder) {
-        builder.append("export class ").append(writeName()).append(" ");
+        boolean module =
+            ((ES6CompileEngine) node().getProgram().getController().compileEngine).module;
+
+        if (module) {
+            builder.append("export ");
+        }
+
+        builder.append("class ").append(writeName()).append(" ");
 
         if (node().doesExtendClass()) {
             builder.append("extends ")
