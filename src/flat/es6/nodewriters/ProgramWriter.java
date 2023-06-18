@@ -8,7 +8,6 @@ import flat.es6.engines.ES6CompileEngine;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static flat.Flat.LIBRARY;
@@ -206,6 +205,8 @@ public abstract class ProgramWriter extends TypeListWriter {
             if (!engine.module) {
                 builder.append("})();\n");
             }
+        } else {
+            builder.append("await __callStaticBlocks();\n");
         }
 
         if (localScope) {
