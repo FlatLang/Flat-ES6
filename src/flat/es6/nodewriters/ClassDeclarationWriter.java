@@ -163,9 +163,10 @@ public abstract class ClassDeclarationWriter extends InstanceDeclarationWriter {
 
     public StringBuilder writeStaticBlockCalls(final StringBuilder builder) {
         if (node().getStaticBlockList().getNumVisibleChildren() > 0) {
-            node().getStaticBlockList().forEachVisibleChild(block -> {
+            node().getStaticBlockList().forEachVisibleChild(node -> {
+                StaticBlock block = (StaticBlock) node;
                 if (block.getScope().getNumVisibleChildren() > 0) {
-                    if (block.isAsync())
+                    if (getWriter(block).isAsync())
                         builder.append("await ");
                     StaticBlockWriter.generateMethodName(builder, node(), block.getIndex())
                         .append("();\n");

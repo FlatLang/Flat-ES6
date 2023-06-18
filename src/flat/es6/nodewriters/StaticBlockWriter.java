@@ -1,5 +1,7 @@
 package flat.es6.nodewriters;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import flat.tree.*;
 
 public abstract class StaticBlockWriter extends NodeWriter {
@@ -17,7 +19,7 @@ public abstract class StaticBlockWriter extends NodeWriter {
         generateMethodName(builder, node().getParentClass(), node().getIndex())
             .append("_initialized").append(" = false;\n");
 
-        if (node().isAsync())
+        if (isAsync())
             builder.append("async ");
 
         builder.append("function ");
@@ -35,8 +37,12 @@ public abstract class StaticBlockWriter extends NodeWriter {
             TypeList<StaticBlock> blocks = c.getStaticBlockList();
 
             if (blocks.getNumVisibleChildren() > 0) {
-                c.getStaticBlockList().forEachVisibleChild(block -> {
+                c.getStaticBlockList().forEachVisibleChild(node -> {
+                    StaticBlock block = (StaticBlock) node;
                     if (block.getScope().getNumVisibleChildren() > 0) {
+                        if (getWriter(block).isAsync()) {
+                            builder.append("await ");
+                        }
                         generateMethodName(builder, c, block.getIndex()).append("();\n");
                     }
                 });
@@ -46,6 +52,20 @@ public abstract class StaticBlockWriter extends NodeWriter {
         getWriter(scope).write(builder, false, false);
 
         return builder.append("}\n}\n");
+    }
+
+    public boolean isAsync() {
+        return isAsync(new ArrayList<>());
+    }
+
+    public boolean isAsync(ArrayList<Node> checked) {
+        if (checked.contains(node()))
+            return node().isAsync();
+        checked.add(node());
+        return node().isAsync() || Arrays.stream(node().getScope().getDependencies())
+            .anyMatch(
+                x -> x.getStaticBlockList().getChildStream().map(s -> getWriter((StaticBlock) s))
+                    .anyMatch(s -> s.isAsync(checked)));
     }
 
     public static StringBuilder generateMethodName(StringBuilder builder, ClassDeclaration clazz,
