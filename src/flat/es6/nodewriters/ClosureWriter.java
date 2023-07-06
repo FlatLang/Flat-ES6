@@ -39,7 +39,8 @@ public abstract class ClosureWriter extends VariableWriter
 		}
 		
 		builder.append("function ").append(getWriter(params).write());
-		builder.append(" { var self = ").append(context).append("; return self.").append(node().getName()).append(".call(self");
+		builder.append(" { var self = ").append(context).append("; return self.");
+        getWriter(node().getMethodDeclaration()).writeName(builder).append(".call(self");
 		
 		if (params.getNumParameters() > 0)
 		{
