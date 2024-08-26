@@ -2,11 +2,11 @@ name: Test ES6 Compilation Target
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
   schedule:
-    - cron: '0 7 * * *'
+    - cron: "0 7 * * *"
 
 env:
   LOGGING_DEFAULT_SHOW_PREFIX: true
@@ -15,7 +15,6 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -35,7 +34,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
 
       - name: Cache Maven dependencies
         uses: actions/cache@v3
